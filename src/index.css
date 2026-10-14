@@ -22,17 +22,18 @@ code {
 
 .cases {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
   gap: 1rem;
 }
 
 .case {
+  min-width: 0;
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 1rem;
 }
 
-.case h2 {
+.case h3 {
   margin: 0 0 0.25rem;
   font-size: 1rem;
 }

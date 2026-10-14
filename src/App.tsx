@@ -5,7 +5,7 @@ import { FontAwesomeIcon as FontAwesomeIconLegacy } from 'react-fontawesome-0.2.
 
 const ITEMS = ['List icons can', 'be used to', 'replace bullets']
 
-type Probe = { svgClass: string; inGutter: boolean }
+type Probe = { svgClass: string; inGutter: boolean; nestedFaLi: boolean }
 
 // Reads the first rendered icon back out of the DOM: which classes it got, and
 // whether it ended up inside an absolutely positioned `.fa-li` (i.e. hanging in
@@ -17,6 +17,7 @@ function probeList(list: HTMLUListElement): Probe | null {
   return {
     svgClass: svg.getAttribute('class') ?? '',
     inGutter: faLi !== null && getComputedStyle(faLi).position === 'absolute',
+    nestedFaLi: svg.classList.contains('fa-li') && svg.parentElement?.closest('.fa-li') != null,
   }
 }
 
@@ -38,7 +39,7 @@ function Case({
 
   return (
     <section className="case" data-testid={title}>
-      <h2>{title}</h2>
+      <h3>{title}</h3>
       <pre>
         <code>{code}</code>
       </pre>
@@ -52,8 +53,12 @@ function Case({
       </ul>
       {probe && (
         <p className="probe">
-          <span className={probe.inGutter ? 'pass' : 'fail'}>
-            {probe.inGutter ? '✅ icon hangs in the list gutter' : '❌ icon is inline with the text'}
+          <span className={probe.inGutter && !probe.nestedFaLi ? 'pass' : 'fail'}>
+            {probe.nestedFaLi
+              ? '❌ nested fa-li shifts the icon too far left'
+              : probe.inGutter
+                ? '✅ icon hangs in the list gutter'
+                : '❌ icon is inline with the text'}
           </span>
           <br />
           svg class: <code>{probe.svgClass}</code>
@@ -83,6 +88,7 @@ export default function App() {
         starts on it.
       </p>
 
+      <h2>Version comparison</h2>
       <div className="cases">
         <Case
           title={`v${__VERSIONS__.legacy} · listItem`}
@@ -104,6 +110,43 @@ export default function App() {
           )}
         />
       </div>
+
+      <section aria-labelledby="wrapper-compatibility">
+        <h2 id="wrapper-compatibility">Wrapper workaround: before and after PR #669</h2>
+        <p>
+          If you added a <code>fa-li</code> wrapper but kept <code>listItem</code>,{' '}
+          <a href="https://github.com/FortAwesome/react-fontawesome/pull/669">PR #669</a> would
+          add <code>fa-li</code> to the SVG too. Both elements then apply absolute positioning:
+          there is still one icon, but it moves an extra <code>2em</code> left with the default
+          styles. The text stays in place. Remove <code>listItem</code> when using the wrapper to
+          keep the layout shown above.
+        </p>
+        <p>
+          The after case simulates the patch by adding <code>className="fa-li"</code> to the
+          v{__VERSIONS__.latest} icon. This produces the same SVG class that the PR restores;
+          the displayed workaround code is identical in both cases.
+        </p>
+        <div className="cases">
+          <Case
+            title={`Before · v${__VERSIONS__.latest} · wrapper + listItem`}
+            code={`<span className="fa-li">\n  <FontAwesomeIcon icon={faCheck} listItem />\n</span>`}
+            renderIcon={(i) => (
+              <span className="fa-li">
+                <FontAwesomeIconLatest icon={icon(i)} listItem />
+              </span>
+            )}
+          />
+          <Case
+            title="After · PR #669 simulated · wrapper + listItem"
+            code={`<span className="fa-li">\n  <FontAwesomeIcon icon={faCheck} listItem />\n</span>`}
+            renderIcon={(i) => (
+              <span className="fa-li">
+                <FontAwesomeIconLatest icon={icon(i)} listItem className="fa-li" />
+              </span>
+            )}
+          />
+        </div>
+      </section>
     </main>
   )
 }

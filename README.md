@@ -15,8 +15,12 @@ Reproduction for [FortAwesome/react-fontawesome#668](https://github.com/FortAwes
 | `listItem` | 0.2.6 | `svg-inline--fa fa-check fa-li` | ✅ hangs in the list gutter |
 | `listItem` | 3.5.0 (latest) | `svg-inline--fa fa-check` | ❌ inline, pushes the text right |
 | `<span className="fa-li">` wrapper, no `listItem` | 3.5.0 (latest) | `svg-inline--fa fa-check` | ✅ hangs in the list gutter |
+| `<span className="fa-li">` wrapper + `listItem`, before the patch | 3.5.0 (latest) | `svg-inline--fa fa-check` | ✅ wrapper hangs the icon in the list gutter |
+| Same wrapper + `listItem`, simulating PR #669 | 3.5.0 + explicit SVG `fa-li` class | `svg-inline--fa fa-check fa-li` | ❌ nested positioning moves the icon an extra 2em left |
 
-All three cases share the same `@fortawesome/fontawesome-svg-core@7.3.1` and `react@19`. v0.2.6 is installed alongside v3.5.0 through an npm alias (`react-fontawesome-0.2.6`), so only the React wrapper differs.
+All cases share the same `@fortawesome/fontawesome-svg-core@7.3.1` and `react@19`. v0.2.6 is installed alongside v3.5.0 through an npm alias (`react-fontawesome-0.2.6`), so only the React wrapper differs in the version comparison.
+
+The workaround comparison shows what [PR #669](https://github.com/FortAwesome/react-fontawesome/pull/669) could cause for users who kept `listItem` after adding a `fa-li` wrapper. The after case uses `className="fa-li"` on the v3.5.0 icon to simulate the class restored by the patch. Both elements apply positioning, shifting the single icon a further 2em left while the text stays put. Removing `listItem` from the wrapped icon avoids the extra offset.
 
 ## Findings
 

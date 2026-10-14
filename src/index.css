@@ -1,0 +1,66 @@
+:root {
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #1a1a1a;
+  background: #fff;
+}
+
+body {
+  margin: 0;
+  padding: 2rem;
+}
+
+main {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.875em;
+}
+
+.cases {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1rem;
+}
+
+.case {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.case h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+}
+
+.case pre {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  overflow-x: auto;
+}
+
+/* Dashed guide marks where list text should start when fa-li styling applies */
+.case .fa-ul {
+  border-left: 1px dashed #c33;
+  padding-block: 0.25rem;
+}
+
+.probe {
+  font-size: 0.8125rem;
+  margin: 0.5rem 0 0;
+}
+
+.pass {
+  color: #1a7f37;
+}
+
+.fail {
+  color: #c33;
+}
